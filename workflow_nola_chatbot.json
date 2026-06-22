@@ -1,0 +1,143 @@
+{
+  "name": "Nola CS Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Olá! Sou o **Nola Bot**, assistente virtual do time de Customer Success da Nola 🍽️\n\nEstou aqui para ajudar com dúvidas sobre a plataforma. Como posso te ajudar hoje?",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 380],
+      "webhookId": "nola-cs-chatbot-webhook"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "1zLCPD-0vAM55e2ceXCibtHx1ZHIvnYe-n2gYbBrrh2U",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Página1",
+          "mode": "name"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "a1b2c3d4-0002-0002-0002-000000000002",
+      "name": "Buscar Base de Conhecimento",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 380],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PREENCHA_COM_ID_DA_CREDENCIAL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Formatar os dados do Google Sheets como base de conhecimento\nconst rows = $input.all();\n\nlet knowledgeBase = 'BASE DE CONHECIMENTO DA NOLA:\\n\\n';\n\nfor (const row of rows) {\n  const d = row.json;\n  if (d['Pergunta'] && d['Resposta']) {\n    knowledgeBase += `[${d['Categoria'] || 'Geral'}]\\n`;\n    knowledgeBase += `Pergunta/Tema: ${d['Pergunta']}\\n`;\n    knowledgeBase += `Resposta: ${d['Resposta']}\\n`;\n    knowledgeBase += `---\\n\\n`;\n  }\n}\n\n// Capturar a mensagem do usuário\nconst chatInput = $('When chat message received').item.json.chatInput || '';\n\nreturn [{\n  json: {\n    knowledge_base: knowledgeBase,\n    chat_input: chatInput\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0003-0003-0003-000000000003",
+      "name": "Formatar Base de Conhecimento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 380]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chat_input }}",
+        "options": {
+          "systemMessage": "=Você é o Nola Bot, assistente virtual de suporte do time de Customer Success da Nola — uma plataforma inteligente de gestão de restaurantes.\n\nSua missão é responder as dúvidas dos clientes com clareza, objetividade e um tom acolhedor e profissional.\n\n{{ $json.knowledge_base }}\n\nDIRETRIZES DE ATENDIMENTO:\n1. Baseie suas respostas EXCLUSIVAMENTE na base de conhecimento fornecida acima\n2. Seja claro, direto e amigável — use linguagem simples, sem jargões técnicos desnecessários\n3. Se a informação solicitada NÃO estiver na base de conhecimento, responda: \"Essa dúvida é um pouco mais específica! Vou escalar para um especialista do nosso time de CS que irá te ajudar em breve. 😊\"\n4. Demonstre empatia quando o cliente estiver frustrado ou com problemas urgentes\n5. Nunca invente informações ou funcionalidades que não existam\n6. Responda SEMPRE em português\n7. Finalize suas respostas se colocando à disposição para outras dúvidas\n8. Quando listar passos, use numeração para facilitar a leitura\n9. Se pertinente, mencione que o cliente pode abrir um chamado pelo chat, e-mail (suporte@nola.com.br) ou WhatsApp do suporte\n\nLembre-se: você representa a Nola. Cada atendimento é uma oportunidade de encantar o cliente! 🍽️"
+        }
+      },
+      "id": "a1b2c3d4-0004-0004-0004-000000000004",
+      "name": "Nola Bot - AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [900, 380]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 1024
+        }
+      },
+      "id": "a1b2c3d4-0005-0005-0005-000000000005",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [900, 580],
+      "credentials": {
+        "groqApi": {
+          "id": "PREENCHA_COM_ID_DA_CREDENCIAL_GROQ",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Buscar Base de Conhecimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Base de Conhecimento": {
+      "main": [
+        [
+          {
+            "node": "Formatar Base de Conhecimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Base de Conhecimento": {
+      "main": [
+        [
+          {
+            "node": "Nola Bot - AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Nola Bot - AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "nola-chatbot-case"
+  }
+}
