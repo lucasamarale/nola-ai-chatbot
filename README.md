@@ -1,12 +1,12 @@
-# nola AI — Intelligent Customer Support Chatbot
+# nola AI: Intelligent Customer Support Chatbot
 
-> AI-powered support chatbot built for [Nola](https://usenola.com.br) — a restaurant management SaaS platform. Developed as part of a 48-hour internship challenge for the Customer Success team.
+> AI-powered support chatbot built for [Nola](https://usenola.com.br), a restaurant management SaaS platform. Developed as part of a 48-hour internship challenge for the Customer Success team.
 
 ---
 
 ## Overview
 
-Customer Success teams spend a significant amount of time answering repetitive questions — product setup, hardware troubleshooting, delivery integrations. **nola AI** automates these interactions, delivering instant, accurate responses 24/7 and freeing the CS team to focus on cases that truly require human attention.
+Customer Success teams spend a significant amount of time answering repetitive questions: product setup, hardware troubleshooting, delivery integrations. **nola AI** automates these interactions, delivering instant, accurate responses 24/7 and freeing the CS team to focus on cases that truly require human attention.
 
 ---
 
@@ -30,7 +30,7 @@ Browser (HTML/JS)
 Python CORS Proxy (port 3001)
       │
       ▼
-N8N Webhook (cloud)
+n8n Webhook (cloud)
       │
       ├── Knowledge Base (Google Sheets / CSV)
       │
@@ -42,10 +42,10 @@ Response → User
 ```
 
 **Key design decisions:**
-- **No frontend framework** — plain HTML, CSS and JavaScript for zero dependencies and fast load
-- **Python proxy** — resolves CORS restrictions when calling N8N from the browser
-- **Session ID per conversation** — each chat session gets a unique ID to maintain context
-- **Editable knowledge base** — CSV/Google Sheets format so the CS team can update it without touching code
+- **No frontend framework**: plain HTML, CSS and JavaScript for zero dependencies and fast load
+- **Python proxy**: resolves CORS restrictions when calling n8n from the browser
+- **Session ID per conversation**: each chat session gets a unique ID to maintain context
+- **Editable knowledge base**: CSV/Google Sheets format so the CS team can update it without touching code
 
 ---
 
@@ -54,7 +54,7 @@ Response → User
 | Layer | Tool |
 |---|---|
 | Frontend | HTML, CSS, JavaScript |
-| Orchestration | [N8N](https://n8n.io) |
+| Orchestration | [n8n](https://n8n.io) |
 | LLM Inference | [Groq API](https://groq.com) (LLaMA) |
 | Knowledge Base | Google Sheets / CSV |
 | CORS Proxy | Python (http.server + subprocess) |
@@ -65,8 +65,8 @@ Response → User
 
 ```
 ├── nola_chatbot_frontend.html   # Chat interface (standalone, no build step)
-├── proxy.py                     # CORS proxy — forwards requests to N8N
-├── workflow_nola_chatbot.json   # N8N workflow (importable)
+├── proxy.py                     # CORS proxy: forwards requests to n8n
+├── workflow_nola_chatbot.json   # n8n workflow (importable)
 ├── base_conhecimento_nola.csv   # Knowledge base (40+ Q&A entries)
 ├── abrir_chatbot.command        # macOS launcher script
 └── GUIA_CONFIGURACAO_N8N.md    # Step-by-step setup guide (Portuguese)
@@ -79,12 +79,12 @@ Response → User
 ### Prerequisites
 
 - Python 3.x
-- N8N account (cloud or self-hosted)
-- Groq API key — [get one free at console.groq.com](https://console.groq.com)
+- n8n account (cloud or self-hosted)
+- Groq API key: [get one free at console.groq.com](https://console.groq.com)
 
-### 1. Import the N8N workflow
+### 1. Import the n8n workflow
 
-1. Open your N8N instance
+1. Open your n8n instance
 2. Go to **Workflows → Import**
 3. Upload `workflow_nola_chatbot.json`
 4. Add your Groq API key as a credential
@@ -92,7 +92,7 @@ Response → User
 
 ### 2. Configure the proxy
 
-Open `proxy.py` and update the N8N webhook URL:
+Open `proxy.py` and update the n8n webhook URL:
 
 ```python
 N8N_URL = "https://your-instance.app.n8n.cloud/webhook/your-webhook-id/chat"
@@ -128,14 +128,14 @@ To extend the bot's knowledge, simply add rows to the CSV and re-import to Googl
 
 ## AI Tools Used
 
-- **[Claude](https://claude.ai) (Anthropic)** — used as a technical reasoning partner throughout development: architecture decisions, debugging CORS issues, prompt engineering, and pixel-perfect logo crop math
-- **Groq + LLaMA** — LLM inference engine powering the chatbot responses, chosen for its low latency
-- **N8N** — workflow orchestration with native AI capabilities
+- **[Claude](https://claude.ai) (Anthropic)**: used as a technical reasoning partner throughout development, for architecture decisions, debugging CORS issues, prompt engineering, and pixel-perfect logo crop math
+- **Groq + LLaMA**: LLM inference engine powering the chatbot responses, chosen for its low latency
+- **n8n**: workflow orchestration with native AI capabilities
 
 ---
 
 ## About
 
-Built in under 48 hours as a practical challenge for a Customer Success internship position at [Nola](https://usenola.com.br) — a Brazilian SaaS platform for restaurant management.
+Built in under 48 hours as a practical challenge for a Customer Success internship position at [Nola](https://usenola.com.br), a Brazilian SaaS platform for restaurant management.
 
-**Author:** Lucas Amaral — [lucasamaralevangelista@gmail.com](mailto:lucasamaralevangelista@gmail.com)
+**Author:** [Lucas Amaral Evangelista](https://lucasamarale.dev), Software & AI Engineer · [lucasamaralevangelista@gmail.com](mailto:lucasamaralevangelista@gmail.com)
